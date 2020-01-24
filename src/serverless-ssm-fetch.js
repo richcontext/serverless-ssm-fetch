@@ -31,6 +31,10 @@ class SsmFetch {
         this._triggeredFromHook = true;
         return this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter'])
       },
+      'before:wsgi:serve:serve': () => {
+        this._triggeredFromHook = true;
+        return this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter'])
+      },
       'serverless-ssm-fetch:parameter:validate': () => this._triggeredFromHook ? BbPromise.resolve() : BbPromise.reject(new Error('Internal use only')),
       'serverless-ssm-fetch:parameter:get': () => BbPromise.bind(this)
           .then(this.getParameter)

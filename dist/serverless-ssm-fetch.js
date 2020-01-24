@@ -43,6 +43,10 @@ var SsmFetch = function () {
         _this._triggeredFromHook = true;
         return _this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter']);
       },
+      'before:wsgi:serve:serve': function beforeWsgiServeServe() {
+        _this._triggeredFromHook = true;
+        return _this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter']);
+      },
       'serverless-ssm-fetch:parameter:validate': function serverlessSsmFetchParameterValidate() {
         return _this._triggeredFromHook ? BbPromise.resolve() : BbPromise.reject(new Error('Internal use only'));
       },
