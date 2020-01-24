@@ -39,14 +39,9 @@ var SsmFetch = function () {
     };
 
     this.hooks = {
-      'after:package:cleanup': function afterPackageCleanup() {
-        _this._triggeredFromHook = true;
-        return _this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter']);
-      },
-      'before:wsgi:serve:serve': function beforeWsgiServeServe() {
-        _this._triggeredFromHook = true;
-        return _this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter']);
-      },
+      'after:package:cleanup': this.triggerFromHook,
+      'before:wsgi:serve:serve': this.triggerFromHook,
+      'before:invoke:local:invoke': this.triggerFromHook,
       'serverless-ssm-fetch:parameter:validate': function serverlessSsmFetchParameterValidate() {
         return _this._triggeredFromHook ? BbPromise.resolve() : BbPromise.reject(new Error('Internal use only'));
       },
@@ -57,6 +52,12 @@ var SsmFetch = function () {
   }
 
   _createClass(SsmFetch, [{
+    key: 'triggerFromHook',
+    value: function triggerFromHook() {
+      this._triggeredFromHook = true;
+      return this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter']);
+    }
+  }, {
     key: 'getParameter',
     value: function getParameter() {
       var _this2 = this;
