@@ -35,7 +35,7 @@ class SsmFetch {
         this._triggeredFromHook = true;
         return this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter'])
       },
-      'before:invoke:local:invoke': () => {
+      'after:invoke:local:loadEnvVars': () => {
         this._triggeredFromHook = true;
         return this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter'])
       },
@@ -155,6 +155,8 @@ class SsmFetch {
 
       }
 
+      mergeEnv(currentFunction.environment, process.env);
+      
       this.serverless.cli.log('> serverless-ssm-fetch: Function "' + functionName + '" set environment variables: ' + JSON.stringify(Object.keys(currentFunction.environment)));
 
     });
@@ -183,5 +185,15 @@ class SsmFetch {
 
 
 }
+
+function mergeEnv(source, dest) {
+  if(!source || !dest) {
+      return;
+  }
+  Object.keys(source).forEach(key => {
+      dest[key] = source[key];
+  });
+}
+
 
 module.exports = SsmFetch;

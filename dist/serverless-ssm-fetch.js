@@ -47,7 +47,7 @@ var SsmFetch = function () {
         _this._triggeredFromHook = true;
         return _this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter']);
       },
-      'before:invoke:local:invoke': function beforeInvokeLocalInvoke() {
+      'after:invoke:local:loadEnvVars': function afterInvokeLocalLoadEnvVars() {
         _this._triggeredFromHook = true;
         return _this.serverless.pluginManager.run(['serverless-ssm-fetch', 'parameter']);
       },
@@ -166,6 +166,8 @@ var SsmFetch = function () {
           });
         }
 
+        mergeEnv(currentFunction.environment, process.env);
+
         _this3.serverless.cli.log('> serverless-ssm-fetch: Function "' + functionName + '" set environment variables: ' + JSON.stringify(Object.keys(currentFunction.environment)));
       });
     }
@@ -197,5 +199,14 @@ var SsmFetch = function () {
 
   return SsmFetch;
 }();
+
+function mergeEnv(source, dest) {
+  if (!source || !dest) {
+    return;
+  }
+  Object.keys(source).forEach(function (key) {
+    dest[key] = source[key];
+  });
+}
 
 module.exports = SsmFetch;
